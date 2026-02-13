@@ -6,7 +6,7 @@ class FloatCommentBox extends StatelessWidget {
   final TextEditingController commentController;
   final CommentManager commentManager;
   final VoidCallback onSend;
-  
+
   void _showCommentsSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -62,7 +62,7 @@ class FloatCommentBox extends StatelessWidget {
         ),
         const SizedBox(width: 12),
 
-        GestureDetector(
+         GestureDetector(
           onTap: () => _showCommentsSheet(context),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

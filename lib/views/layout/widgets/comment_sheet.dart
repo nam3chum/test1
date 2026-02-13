@@ -117,7 +117,7 @@ class _CommentSheetState extends State<CommentSheet> {
     if (_sheetHeight == 0) {
       final screenHeight = MediaQuery.of(context).size.height;
       _minHeight = screenHeight * 0.4;
-      _maxHeight = screenHeight * 0.95;
+      _maxHeight = screenHeight;
       _sheetHeight = screenHeight * 0.5;
       setState(() {});
     }
@@ -125,28 +125,27 @@ class _CommentSheetState extends State<CommentSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragUpdate: (details) {
-        setState(() {
-          _sheetHeight -= details.delta.dy;
-          _sheetHeight = _sheetHeight.clamp(_minHeight, _maxHeight);
-        });
-      },
-      child: Container(
-        height: _sheetHeight,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+    return Container(
+      height: _sheetHeight,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                // Header with drag handle
-                MouseRegion(
+      ),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              GestureDetector(
+                onVerticalDragUpdate: (details) {
+                  setState(() {
+                    _sheetHeight -= details.delta.dy;
+                    _sheetHeight = _sheetHeight.clamp(_minHeight, _maxHeight);
+                  });
+                },
+                child: MouseRegion(
                   cursor: SystemMouseCursors.resizeRow,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -205,161 +204,92 @@ class _CommentSheetState extends State<CommentSheet> {
                     ),
                   ),
                 ),
+              ),
 
-                const Divider(height: 1),
+              const Divider(height: 1),
 
-                Expanded(
-                  child:
-                      widget.commentManager.comments.isEmpty
-                          ? Center(
-                            child: Text(
-                              'Không có bình luận nào',
-                              style: TextStyle(
-                                color: Colors.grey[400],
-                                fontSize: 14,
-                              ),
+              Expanded(
+                child:
+                    widget.commentManager.comments.isEmpty
+                        ? Center(
+                          child: Text(
+                            'Không có bình luận nào',
+                            style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 14,
                             ),
-                          )
-                          : Stack(
-                            children: [
-                              ListView.builder(
-                                controller: _listViewController,
-                                padding: EdgeInsets.only(
-                                  left: 16,
-                                  right: 16,
-                                  top: 8,
-                                  bottom:
-                                      MediaQuery.of(context).viewInsets.bottom +
-                                      75,
-                                ),
-                                itemCount:
-                                    widget.commentManager.comments.length,
-                                itemBuilder: (context, index) {
-                                  return CommentItem(
-                                    comment:
-                                        widget.commentManager.comments[index],
-                                  );
-                                },
-                              ),
-                              if (_showScrollButton)
-                                Positioned(
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 100,
-                                  child: Center(
-                                    child: FloatingActionButton(
-                                      mini: true,
-                                      shape: CircleBorder(),
-                                      onPressed: _scrollToBottom,
-                                      backgroundColor: Colors.purple,
-                                      child: const Icon(
-                                        Icons.arrow_downward,
-                                        color: Colors.white,
-                                        size: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
                           ),
-                ),
-              ],
-            ),
-
-            // Comment input mới
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 12,
-              child: Container(
-                padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 12,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 12,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.12),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(1, 3),
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          controller: _commentController,
-                          onChanged: (value) {
-                            final hasError = value.length > _maxLengh;
-                            final enable = value.isNotEmpty && !hasError && !isLoading;
-                            if (enable != isEnabled ||
-                                hasError != hasErrorText) {
-                              setState(() {
-                                isEnabled = enable;
-                                hasErrorText = hasError;
-                              });
-                            }
-                          },
-                          minLines: 1,
-                          maxLines: 3,
-                          maxLength: _maxLengh,
-
-                          maxLengthEnforcement: MaxLengthEnforcement.none,
-                          decoration: InputDecoration(
-                            hintText: 'Viết bình luận...',
-                            counterText: '',
-                            counter: ValueListenableBuilder<TextEditingValue>(
-                              valueListenable: _commentController,
-                              builder: (_, value, __) {
-                                final length = value.text.length;
-                                final isOver = length > _maxLengh;
-
-                                if (!isOver) return const SizedBox.shrink();
-
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Text(
-                                    '$length / $_maxLengh',
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 12,
-                                    ),
-                                  ),
+                        )
+                        : Stack(
+                          children: [
+                            ListView.builder(
+                              controller: _listViewController,
+                              padding: EdgeInsets.only(
+                                left: 16,
+                                right: 16,
+                                top: 8,
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom +
+                                    75,
+                              ),
+                              itemCount: widget.commentManager.comments.length,
+                              itemBuilder: (context, index) {
+                                return CommentItem(
+                                  comment:
+                                      widget.commentManager.comments[index],
                                 );
                               },
                             ),
-                            errorText:
-                                hasErrorText
-                                    ? 'Đã vượt quá $_maxLengh ký tự'
-                                    : null,
-                            errorStyle: const TextStyle(color: Colors.red),
-                            hintStyle: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 16,
-                            ),
-                            border: InputBorder.none,
-                          ),
+                            if (_showScrollButton)
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 100,
+                                child: Center(
+                                  child: FloatingActionButton(
+                                    mini: true,
+                                    shape: CircleBorder(),
+                                    onPressed: _scrollToBottom,
+                                    backgroundColor: Colors.purple,
+                                    child: const Icon(
+                                      Icons.arrow_downward,
+                                      color: Colors.white,
+                                      size: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
+              ),
+            ],
+          ),
+
+          // Comment input mới
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 12,
+            child: Container(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 12,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 12,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.85),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black12,
@@ -369,26 +299,91 @@ class _CommentSheetState extends State<CommentSheet> {
                           ),
                         ],
                       ),
-                      child: IconButton(
-                        icon:
-                            isLoading
-                                ? Center(child: CircularProgressIndicator())
-                                : Icon(
-                                  Icons.send,
-                                  color:
-                                      isEnabled
-                                          ? Colors.black
-                                          : Colors.grey,
+                      child: TextField(
+                        controller: _commentController,
+                        onChanged: (value) {
+                          final hasError = value.length > _maxLengh;
+                          final enable =
+                              value.isNotEmpty && !hasError && !isLoading;
+                          if (enable != isEnabled || hasError != hasErrorText) {
+                            setState(() {
+                              isEnabled = enable;
+                              hasErrorText = hasError;
+                            });
+                          }
+                        },
+                        minLines: 1,
+                        maxLines: 3,
+                        maxLength: _maxLengh,
+
+                        maxLengthEnforcement: MaxLengthEnforcement.none,
+                        decoration: InputDecoration(
+                          hintText: 'Viết bình luận...',
+                          counterText: '',
+                          counter: ValueListenableBuilder<TextEditingValue>(
+                            valueListenable: _commentController,
+                            builder: (_, value, __) {
+                              final length = value.text.length;
+                              final isOver = length > _maxLengh;
+
+                              if (!isOver) return const SizedBox.shrink();
+
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  '$length / $_maxLengh',
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
                                 ),
-                        onPressed: isEnabled ? _send : null,
+                              );
+                            },
+                          ),
+                          errorText:
+                              hasErrorText
+                                  ? 'Đã vượt quá $_maxLengh ký tự'
+                                  : null,
+                          errorStyle: const TextStyle(color: Colors.red),
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 16,
+                          ),
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.85),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(1, 3),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon:
+                          isLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : Icon(
+                                Icons.send,
+                                color: isEnabled ? Colors.black : Colors.grey,
+                              ),
+                      onPressed: isEnabled ? _send : null,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
