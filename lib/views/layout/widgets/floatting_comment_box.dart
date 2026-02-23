@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test1/views/layout/widgets/comment_sheet.dart';
 import 'package:test1/model/comment_manager.dart';
+import 'package:test1/views/layout/widgets/comment_sheet.dart';
 
 class FloatCommentBox extends StatelessWidget {
   final TextEditingController commentController;
@@ -11,12 +11,11 @@ class FloatCommentBox extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       barrierColor: Colors.transparent,
-      scrollControlDisabledMaxHeightRatio: MediaQuery.of(context).size.height,
-      useSafeArea: true,
+      isScrollControlled: true,
       builder:
-          (context) => CommentSheet(
-            commentManager: commentManager,
-            commentController: commentController,
+          (context) => SafeArea(
+            top: false,
+            child: CommentSheet(commentManager: commentManager, commentController: commentController),
           ),
     );
   }
@@ -62,7 +61,7 @@ class FloatCommentBox extends StatelessWidget {
         ),
         const SizedBox(width: 12),
 
-         GestureDetector(
+        GestureDetector(
           onTap: () => _showCommentsSheet(context),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -84,10 +83,7 @@ class FloatCommentBox extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   '${commentManager.commentCount}',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
