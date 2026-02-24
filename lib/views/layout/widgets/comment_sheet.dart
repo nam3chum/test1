@@ -1,4 +1,5 @@
-// Comment Item Widget
+
+//Custom để test
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:test1/model/comment_data.dart';
@@ -8,7 +9,11 @@ class CommentSheet extends StatefulWidget {
   final CommentManager commentManager;
   final TextEditingController commentController;
 
-  const CommentSheet({super.key, required this.commentManager, required this.commentController});
+  const CommentSheet({
+    super.key,
+    required this.commentManager,
+    required this.commentController,
+  });
 
   @override
   State<CommentSheet> createState() => _CommentSheetState();
@@ -40,7 +45,9 @@ class _CommentSheetState extends State<CommentSheet> {
 
   void _updateScrollButtonVisibility() {
     if (_listViewController.hasClients) {
-      final isAtBottom = _listViewController.offset >= _listViewController.position.maxScrollExtent - 100;
+      final isAtBottom =
+          _listViewController.offset >=
+          _listViewController.position.maxScrollExtent - 100;
       if (_showScrollButton == isAtBottom) {
         setState(() {
           _showScrollButton = !isAtBottom;
@@ -61,9 +68,14 @@ class _CommentSheetState extends State<CommentSheet> {
     await Future.delayed(const Duration(milliseconds: 800));
 
     final now = DateTime.now();
-    final time = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    final time =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-    final newComment = CommentData(username: defaultUsername, time: time, comment: commentText);
+    final newComment = CommentData(
+      username: defaultUsername,
+      time: time,
+      comment: commentText,
+    );
 
     if (mounted) {
       widget.commentManager.addComment(newComment);
@@ -87,7 +99,9 @@ class _CommentSheetState extends State<CommentSheet> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_listViewController.hasClients) {
-        _listViewController.jumpTo(_listViewController.position.maxScrollExtent);
+        _listViewController.jumpTo(
+          _listViewController.position.maxScrollExtent,
+        );
       }
     });
   }
@@ -117,23 +131,28 @@ class _CommentSheetState extends State<CommentSheet> {
       height: _sheetHeight,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
       child: Stack(
         children: [
           Column(
             children: [
               GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onVerticalDragUpdate: (details) {
                   setState(() {
                     _sheetHeight -= details.delta.dy;
                     _sheetHeight = _sheetHeight.clamp(_minHeight, _maxHeight);
                   });
                 },
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.resizeRow,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     child: Column(
                       children: [
                         // Drag handle
@@ -160,7 +179,9 @@ class _CommentSheetState extends State<CommentSheet> {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: widget.commentManager.commentCount.toString(),
+                                    text:
+                                        widget.commentManager.commentCount
+                                            .toString(),
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey[600],
@@ -183,7 +204,7 @@ class _CommentSheetState extends State<CommentSheet> {
                       ],
                     ),
                   ),
-                ),
+
               ),
 
               const Divider(height: 1),
@@ -194,47 +215,58 @@ class _CommentSheetState extends State<CommentSheet> {
                         ? Center(
                           child: Text(
                             'Không có bình luận nào',
-                            style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                            style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 14,
+                            ),
                           ),
                         )
-                        : SelectionArea(child: Stack(
-                          children: [
-                            ListView.builder(
-                              controller: _listViewController,
-                              padding: EdgeInsets.only(
-                                left: 16,
-                                right: 16,
-                                top: 8,
-                                bottom: MediaQuery.of(context).viewInsets.bottom + 75,
+                        : SelectionArea(
+                          child: Stack(
+                            children: [
+                              ListView.builder(
+                                controller: _listViewController,
+                                physics: ClampingScrollPhysics(),
+                                padding: EdgeInsets.only(
+                                  left: 16,
+                                  right: 16,
+                                  top: 8,
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom +
+                                      75,
+                                ),
+                                itemCount:
+                                    widget.commentManager.comments.length,
+                                itemBuilder: (context, index) {
+                                  return CommentItem(
+                                    comment:
+                                        widget.commentManager.comments[index],
+                                  );
+                                },
                               ),
-                              itemCount: widget.commentManager.comments.length,
-                              itemBuilder: (context, index) {
-                                return CommentItem(comment: widget.commentManager.comments[index]);
-                              },
-                            ),
-                            if (_showScrollButton)
-                              Positioned(
-                                left: 0,
-                                right: 0,
-                                bottom: 100,
-                                child: Center(
-                                  child: FloatingActionButton(
-                                    mini: true,
-                                    shape: CircleBorder(),
-                                    onPressed: _scrollToBottom,
-                                    backgroundColor: Colors.purple,
-                                    child: const Icon(
-                                      Icons.arrow_downward,
-                                      color: Colors.white,
-                                      size: 20,
-                                      //fontWeight: FontWeight.bold,
+                              if (_showScrollButton)
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 100,
+                                  child: Center(
+                                    child: FloatingActionButton(
+                                      mini: true,
+                                      shape: CircleBorder(),
+                                      onPressed: _scrollToBottom,
+                                      backgroundColor: Colors.purple,
+                                      child: const Icon(
+                                        Icons.arrow_downward,
+                                        color: Colors.white,
+                                        size: 20,
+                                        //fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
-                    )
               ),
             ],
           ),
@@ -251,7 +283,9 @@ class _CommentSheetState extends State<CommentSheet> {
                 top: 12,
                 bottom: MediaQuery.of(context).viewInsets.bottom + 12,
               ),
-              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.12)),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -274,7 +308,8 @@ class _CommentSheetState extends State<CommentSheet> {
                         controller: _commentController,
                         onChanged: (value) {
                           final hasError = value.length > _maxLengh;
-                          final enable = value.isNotEmpty && !hasError && !isLoading;
+                          final enable =
+                              value.isNotEmpty && !hasError && !isLoading;
                           if (enable != isEnabled || hasError != hasErrorText) {
                             setState(() {
                               isEnabled = enable;
@@ -302,14 +337,23 @@ class _CommentSheetState extends State<CommentSheet> {
                                 padding: const EdgeInsets.only(top: 4),
                                 child: Text(
                                   '$length / $_maxLengh',
-                                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               );
                             },
                           ),
-                          errorText: hasErrorText ? 'Đã vượt quá $_maxLengh ký tự' : null,
+                          errorText:
+                              hasErrorText
+                                  ? 'Đã vượt quá $_maxLengh ký tự'
+                                  : null,
                           errorStyle: const TextStyle(color: Colors.red),
-                          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 16),
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 16,
+                          ),
                           border: InputBorder.none,
                         ),
                       ),
@@ -333,7 +377,10 @@ class _CommentSheetState extends State<CommentSheet> {
                       icon:
                           isLoading
                               ? Center(child: CircularProgressIndicator())
-                              : Icon(Icons.send, color: isEnabled ? Colors.black : Colors.grey),
+                              : Icon(
+                                Icons.send,
+                                color: isEnabled ? Colors.black : Colors.grey,
+                              ),
                       onPressed: isEnabled ? _send : null,
                     ),
                   ),
@@ -365,13 +412,25 @@ class CommentItem extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(comment.username, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    Text(
+                      comment.username,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Text(comment.time, style: TextStyle(color: Colors.grey[600], fontSize: 11)),
+                    Text(
+                      comment.time,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(comment.comment, style: const TextStyle(fontSize: 14, height: 1.4)),
+                Text(
+                  comment.comment,
+                  style: const TextStyle(fontSize: 14, height: 1.4),
+                ),
               ],
             ),
           ),
