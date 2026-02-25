@@ -2,10 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:test1/model/comment_manager.dart';
 import 'package:test1/views/layout/widgets/comment_sheet.dart';
 
-class FloatCommentBox extends StatelessWidget {
+class FloatCommentBox extends StatefulWidget {
   final TextEditingController commentController;
   final CommentManager commentManager;
   final VoidCallback onSend;
+
+  const FloatCommentBox({
+    super.key,
+    required this.commentController,
+    required this.commentManager,
+    required this.onSend,
+  });
+
+  @override
+  State<FloatCommentBox> createState() => _FloatCommentBoxState();
+}
+
+class _FloatCommentBoxState extends State<FloatCommentBox> {
+  final ValueNotifier<int> _commentCount = CommentManager.count;
 
   void _showCommentsSheet(BuildContext context) {
     showModalBottomSheet(
@@ -15,17 +29,14 @@ class FloatCommentBox extends StatelessWidget {
       builder:
           (context) => SafeArea(
             top: false,
-            child: CommentSheet(commentManager: commentManager, commentController: commentController),
+            child: CommentSheet(
+              commentManager: widget.commentManager,
+              commentController: widget.commentController,
+            ),
           ),
     );
   }
 
-  const FloatCommentBox({
-    super.key,
-    required this.commentController,
-    required this.commentManager,
-    required this.onSend,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +58,7 @@ class FloatCommentBox extends StatelessWidget {
               ],
             ),
             child: TextField(
-              controller: commentController,
+              controller: widget.commentController,
               decoration: const InputDecoration(
                 hintText: 'Viết bình luận...',
                 hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
@@ -81,9 +92,16 @@ class FloatCommentBox extends StatelessWidget {
               children: [
                 const Icon(Icons.chat_bubble, size: 18),
                 const SizedBox(width: 6),
-                Text(
-                  '${commentManager.commentCount}',
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ValueListenableBuilder(
+                  valueListenable: _commentCount,
+                  builder:
+                      (context, value, child) => Text(
+                        '$value',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                 ),
               ],
             ),

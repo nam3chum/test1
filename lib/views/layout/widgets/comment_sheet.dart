@@ -78,7 +78,7 @@ class _CommentSheetState extends State<CommentSheet> {
     );
 
     if (mounted) {
-      widget.commentManager.addComment(newComment);
+      CommentManager.addComment(newComment);
 
       setState(() {
         _commentController.clear();
@@ -180,7 +180,7 @@ class _CommentSheetState extends State<CommentSheet> {
                                 children: [
                                   TextSpan(
                                     text:
-                                        widget.commentManager.commentCount
+                                        CommentManager.commentCount
                                             .toString(),
                                     style: TextStyle(
                                       fontSize: 16,
@@ -211,7 +211,7 @@ class _CommentSheetState extends State<CommentSheet> {
 
               Expanded(
                 child:
-                    widget.commentManager.comments.isEmpty
+                    CommentManager.comments.isEmpty
                         ? Center(
                           child: Text(
                             'Không có bình luận nào',
@@ -236,11 +236,11 @@ class _CommentSheetState extends State<CommentSheet> {
                                       75,
                                 ),
                                 itemCount:
-                                    widget.commentManager.comments.length,
+                                    CommentManager.comments.length,
                                 itemBuilder: (context, index) {
                                   return CommentItem(
                                     comment:
-                                        widget.commentManager.comments[index],
+                                        CommentManager.comments[index],
                                   );
                                 },
                               ),

@@ -1,7 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:test1/model/comment_data.dart';
 
 class CommentManager {
-  final List<CommentData> comments = [
+  static final List<CommentData> comments = [
     CommentData(comment: "Comment 1", username: "User 1", time: "12:00"),
     CommentData(comment: "Comment 2", username: "User 2", time: "13:00"),
     CommentData(comment: "Comment 3", username: "User 3", time: "14:00"),
@@ -11,12 +12,11 @@ class CommentManager {
     CommentData(comment: "Comment 7", username: "User 7", time: "18:00"),
   ];
 
-  Function(int)? onCommentAdded;
+  static int get commentCount => comments.length;
+  static ValueNotifier<int> count = ValueNotifier(commentCount);
 
-  int get commentCount => comments.length;
-
-  void addComment(CommentData comment) {
+  static void addComment(CommentData comment) {
     comments.add(comment);
-    onCommentAdded?.call(commentCount);
+    count.value = comments.length;
   }
 }

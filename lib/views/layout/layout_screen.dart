@@ -21,10 +21,10 @@ class LayoutState extends State<LayoutScreen> {
   void initState() {
     super.initState();
     commentManager = CommentManager();
-    // Lắng nghe khi có comment mới được thêm
-    commentManager.onCommentAdded = (newCount) {
-      setState(() {});
-    };
+    //Lắng nghe khi có comment mới được thêm
+    // commentManager.onCommentAdded = (newCount) {
+    //   setState(() {});
+    // };
   }
 
   @override
@@ -125,7 +125,6 @@ class LayoutState extends State<LayoutScreen> {
               ),
             ),
 
-            // Floating Comment Box - luôn hiển thị ở dưới cùng
             Positioned(
               left: 16,
               right: 16,

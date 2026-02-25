@@ -112,15 +112,12 @@ class _CommentBoxState extends State<CommentBox> {
       initialChildSize: _initialSize,
       minChildSize: _minSize,
       maxChildSize: _maxSize,
-      // snap: kéo sẽ snap về điểm gần nhất (tuỳ thích, có thể bỏ)
+
       snap: true,
       snapSizes: [_minSize, _initialSize, _maxSize],
-      // expand: false để sheet KHÔNG tự chiếm toàn màn hình khi build
+
       expand: false,
       builder: (context, scrollController) {
-        // scrollController này là của DraggableScrollableSheet — dùng để drag sheet
-        // Ta KHÔNG dùng nó cho ListView, vì ListView có _listViewController riêng
-        // nhưng khi list KHÔNG scroll được (ít item), drag sẽ tự động kéo sheet
         return Container(
           decoration: const BoxDecoration(
             color: Colors.white,
@@ -133,12 +130,10 @@ class _CommentBoxState extends State<CommentBox> {
             children: [
               Column(
                 children: [
-                  // ── HEADER (drag handle + title + close) ──
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Column(
                       children: [
-                        // Drag handle — người dùng kéo ở đây hoặc kéo trên list rỗng
                         Center(
                           child: Container(
                             width: 40,
@@ -187,7 +182,7 @@ class _CommentBoxState extends State<CommentBox> {
 
                   const Divider(height: 1),
 
-                  // ── COMMENT LIST ──
+
                   Expanded(
                     child: widget.commentManager.comments.isEmpty
                         ? Center(
@@ -200,8 +195,6 @@ class _CommentBoxState extends State<CommentBox> {
                       child: Stack(
                         children: [
                           ListView.builder(
-                            // Khi list CÓ THỂ scroll → dùng _listViewController
-                            // Khi list KHÔNG scroll được (ít item) → gesture truyền lên DraggableScrollableSheet tự kéo
                             controller: _listViewController,
                             padding: EdgeInsets.only(
                               left: 16,
